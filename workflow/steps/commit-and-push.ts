@@ -17,6 +17,17 @@ const getSandbox = async (sandboxId: string): Promise<Sandbox> => {
 const gitCommit = async (sandbox: Sandbox, message: string): Promise<void> => {
   await sandbox.runCommand("git", ["add", "-A"]);
 
+  // Skip when already committed, so a retry after a failed push still pushes
+  const staged = await sandbox.runCommand("git", [
+    "diff",
+    "--cached",
+    "--quiet",
+  ]);
+
+  if (staged.exitCode === 0) {
+    return;
+  }
+
   const result = await sandbox.runCommand("git", [
     "commit",
     "--no-verify",
@@ -36,7 +47,11 @@ const gitPush = async (
   sandbox: Sandbox,
   branchName?: string
 ): Promise<void> => {
-  const args = branchName ? ["push", "origin", branchName] : ["push"];
+  // The sandbox clones the PR branch as a detached HEAD, so push HEAD to the
+  // branch explicitly instead of a local branch ref that doesn't exist
+  const args = branchName
+    ? ["push", "origin", `HEAD:refs/heads/${branchName}`]
+    : ["push"];
   const result = await sandbox.runCommand("git", args);
 
   if (result.exitCode !== 0) {

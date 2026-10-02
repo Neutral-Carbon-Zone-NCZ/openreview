@@ -8,6 +8,28 @@ import type { ThreadMessage } from "@/workflow";
 import { discoverSkills } from "./discover-skills";
 import { startTyping } from "./start-typing";
 
+const MAX_TOTAL_TOKENS = 200_000;
+
+// DurableAgent passes the provider's raw LanguageModelV3 usage through, where
+// token counts are `{ total }` objects rather than the numbers the AI SDK
+// types declare. Accept both shapes.
+const countTokens = (value: unknown): number => {
+  if (typeof value === "number") {
+    return value;
+  }
+
+  if (
+    value &&
+    typeof value === "object" &&
+    "total" in value &&
+    typeof value.total === "number"
+  ) {
+    return value.total;
+  }
+
+  return 0;
+};
+
 export interface AgentResult {
   errorMessage?: string;
   success: boolean;
@@ -41,7 +63,7 @@ export const runAgent = async (
       })),
       onStepFinish: (step) => {
         console.log(
-          `[agent] step: ${step.usage.inputTokens ?? 0} in / ${step.usage.outputTokens ?? 0} out`
+          `[agent] step: ${countTokens(step.usage.inputTokens)} in / ${countTokens(step.usage.outputTokens)} out`
         );
       },
       prepareStep: ({ messages }) => {
@@ -82,10 +104,11 @@ export const runAgent = async (
 
           for (const step of steps) {
             totalTokens +=
-              (step.usage.inputTokens ?? 0) + (step.usage.outputTokens ?? 0);
+              countTokens(step.usage.inputTokens) +
+              countTokens(step.usage.outputTokens);
           }
 
-          return totalTokens > 200_000;
+          return totalTokens > MAX_TOTAL_TOKENS;
         },
       ],
       writable: getWritable<UIMessageChunk>(),

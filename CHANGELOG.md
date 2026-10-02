@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Fixed
+
+- `commitAndPush` failed on every run that changed files: the sandbox clones the PR branch as a detached HEAD, so `git push origin <branch>` had no local ref ("src refspec does not match any"). Now pushes `HEAD:refs/heads/<branch>`, and skips the commit when nothing is staged so retries after a failed push still push.
+- Agent token stop condition (200k) never fired and step logs printed `[object Object]`: DurableAgent passes raw v3 usage (`{ total }` objects), not numbers. `countTokens` in `run-agent.ts` handles both.
+
 ### Added
 
 - Vercel Sandbox works outside Vercel (e.g. Railway): set `VERCEL_TOKEN`, `VERCEL_TEAM_ID` and `VERCEL_PROJECT_ID` and every `Sandbox.create`/`Sandbox.get` call passes them explicitly (`lib/sandbox.ts`). Unset → SDK keeps using Vercel OIDC.
