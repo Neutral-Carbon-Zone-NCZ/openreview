@@ -15,7 +15,7 @@ An open-source, self-hosted AI code review bot. Deploy to Vercel, connect a GitH
 - **Reactions** — React with 👍 or ❤️ to approve suggestions, or 👎 or 😕 to skip
 - **Durable workflows** — Built on [Vercel Workflow](https://vercel.com/docs/workflow) for reliable, resumable execution
 - **Extensible skills** — Ships with built-in review [skills](https://skills.sh) and supports custom skills via `.agents/skills/`
-- **Powered by Claude** — Uses Claude Sonnet 4.6 via the [AI SDK](https://sdk.vercel.ai) for high-quality code analysis
+- **Powered by Claude** — Uses Claude Sonnet 4.6 via the [AI SDK](https://sdk.vercel.ai) by default, routed through [Vercel AI Gateway](https://vercel.com/ai-gateway) or [OpenRouter](https://openrouter.ai)
 - **Simple route handler** — Easily define route handlers using [Next.js Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) for custom API endpoints and webhooks
 
 ## How it works
@@ -97,11 +97,17 @@ Add the following environment variables to your Vercel project:
 | Variable                     | Description                                                            |
 | ---------------------------- | ---------------------------------------------------------------------- |
 | `ANTHROPIC_API_KEY`          | API key for Claude                                                     |
+| `OPENROUTER_API_KEY`         | (Optional) Route model calls through OpenRouter instead of AI Gateway  |
+| `AI_MODEL`                   | (Optional) Model id, defaults to `anthropic/claude-sonnet-4.6`         |
 | `GITHUB_APP_ID`              | The ID of your GitHub App                                              |
 | `GITHUB_APP_INSTALLATION_ID` | The installation ID for your repository                                |
 | `GITHUB_APP_PRIVATE_KEY`     | The private key generated for your GitHub App (with `\n` for newlines) |
 | `GITHUB_APP_WEBHOOK_SECRET`  | The webhook secret you configured                                      |
 | `REDIS_URL`                  | (Optional) Redis URL for persistent state, falls back to in-memory     |
+
+#### Using OpenRouter
+
+Set `OPENROUTER_API_KEY` to send all model calls through [OpenRouter](https://openrouter.ai) instead of Vercel AI Gateway. Pick any OpenRouter model id with `AI_MODEL` (for example `openai/gpt-5` or `google/gemini-2.5-pro`). The model must support tool calling. Without `OPENROUTER_API_KEY`, OpenReview uses AI Gateway as before.
 
 ### 4. Install the GitHub App
 
