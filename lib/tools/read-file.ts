@@ -2,6 +2,8 @@ import { Sandbox } from "@vercel/sandbox";
 import { tool } from "ai";
 import { z } from "zod";
 
+import { getSandboxCredentials } from "@/lib/sandbox";
+
 const SANDBOX_CWD = ".";
 
 const readFileStep = async (
@@ -10,7 +12,7 @@ const readFileStep = async (
 ): Promise<{ content: string }> => {
   "use step";
 
-  const sandbox = await Sandbox.get({ sandboxId });
+  const sandbox = await Sandbox.get({ sandboxId, ...getSandboxCredentials() });
   const resolvedPath = path.startsWith("/") ? path : `${SANDBOX_CWD}/${path}`;
   const buffer = await sandbox.readFileToBuffer({ path: resolvedPath });
 

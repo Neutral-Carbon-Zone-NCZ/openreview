@@ -1,10 +1,11 @@
 import { Sandbox } from "@vercel/sandbox";
 
 import { parseError } from "@/lib/error";
+import { getSandboxCredentials } from "@/lib/sandbox";
 
 const getSandbox = async (sandboxId: string): Promise<Sandbox> => {
   try {
-    return await Sandbox.get({ sandboxId });
+    return await Sandbox.get({ sandboxId, ...getSandboxCredentials() });
   } catch (error) {
     throw new Error(
       `[commitAndPush] Failed to get sandbox: ${parseError(error)}`,

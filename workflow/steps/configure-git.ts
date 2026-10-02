@@ -1,6 +1,7 @@
 import { Sandbox } from "@vercel/sandbox";
 
 import { parseError } from "@/lib/error";
+import { getSandboxCredentials } from "@/lib/sandbox";
 
 const configureRemoteAndIdentity = async (
   sandbox: Sandbox,
@@ -42,7 +43,10 @@ export const configureGit = async (
 ): Promise<void> => {
   "use step";
 
-  const sandbox = await Sandbox.get({ sandboxId }).catch((error: unknown) => {
+  const sandbox = await Sandbox.get({
+    sandboxId,
+    ...getSandboxCredentials(),
+  }).catch((error: unknown) => {
     throw new Error(
       `[configureGit] Failed to get sandbox: ${parseError(error)}`,
       { cause: error }

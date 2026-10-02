@@ -2,6 +2,8 @@ import { Sandbox } from "@vercel/sandbox";
 import { tool } from "ai";
 import { z } from "zod";
 
+import { getSandboxCredentials } from "@/lib/sandbox";
+
 const SANDBOX_CWD = ".";
 
 const runBashStep = async (
@@ -10,7 +12,7 @@ const runBashStep = async (
 ): Promise<{ exitCode: number; stderr: string; stdout: string }> => {
   "use step";
 
-  const sandbox = await Sandbox.get({ sandboxId });
+  const sandbox = await Sandbox.get({ sandboxId, ...getSandboxCredentials() });
   const fullCommand = `export PATH="$HOME/.local/bin:$PATH" && cd "${SANDBOX_CWD}" && ${command}`;
   const result = await sandbox.runCommand("bash", ["-c", fullCommand]);
   const [stdout, stderr] = await Promise.all([

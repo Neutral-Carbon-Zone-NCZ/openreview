@@ -1,6 +1,7 @@
 import { Sandbox } from "@vercel/sandbox";
 
 import { parseError } from "@/lib/error";
+import { getSandboxCredentials } from "@/lib/sandbox";
 
 const detectInstallCommand = async (
   sandbox: Sandbox
@@ -39,7 +40,7 @@ export const installDependencies = async (sandboxId: string): Promise<void> => {
   let sandbox: Sandbox | null = null;
 
   try {
-    sandbox = await Sandbox.get({ sandboxId });
+    sandbox = await Sandbox.get({ sandboxId, ...getSandboxCredentials() });
   } catch (error) {
     throw new Error(
       `[installDependencies] Failed to get sandbox: ${parseError(error)}`,

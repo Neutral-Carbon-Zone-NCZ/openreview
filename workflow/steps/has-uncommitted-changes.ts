@@ -1,6 +1,7 @@
 import { Sandbox } from "@vercel/sandbox";
 
 import { parseError } from "@/lib/error";
+import { getSandboxCredentials } from "@/lib/sandbox";
 
 export const hasUncommittedChanges = async (
   sandboxId: string
@@ -10,7 +11,7 @@ export const hasUncommittedChanges = async (
   let sandbox: Sandbox | null = null;
 
   try {
-    sandbox = await Sandbox.get({ sandboxId });
+    sandbox = await Sandbox.get({ sandboxId, ...getSandboxCredentials() });
   } catch (error) {
     throw new Error(
       `[hasUncommittedChanges] Failed to get sandbox: ${parseError(error)}`,

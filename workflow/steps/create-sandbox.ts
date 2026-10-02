@@ -1,6 +1,7 @@
 import { Sandbox } from "@vercel/sandbox";
 
 import { parseError } from "@/lib/error";
+import { getSandboxCredentials } from "@/lib/sandbox";
 
 const FIVE_MINUTES_MS = 5 * 60 * 1000;
 
@@ -13,6 +14,7 @@ export const createSandbox = async (
 
   try {
     const sandbox = await Sandbox.create({
+      ...getSandboxCredentials(),
       source: {
         depth: 1,
         password: token,

@@ -1,6 +1,7 @@
 import { Sandbox } from "@vercel/sandbox";
 
 import { parseError } from "@/lib/error";
+import { getSandboxCredentials } from "@/lib/sandbox";
 
 const THREE_MINUTES_MS = 3 * 60 * 1000;
 
@@ -10,7 +11,7 @@ export const extendSandbox = async (sandboxId: string): Promise<void> => {
   let sandbox: Sandbox | null = null;
 
   try {
-    sandbox = await Sandbox.get({ sandboxId });
+    sandbox = await Sandbox.get({ sandboxId, ...getSandboxCredentials() });
   } catch (error) {
     throw new Error(
       `[extendSandbox] Failed to get sandbox: ${parseError(error)}`,

@@ -99,6 +99,9 @@ Add the following environment variables to your Vercel project:
 | `ANTHROPIC_API_KEY`          | API key for Claude                                                     |
 | `OPENROUTER_API_KEY`         | (Optional) Route model calls through OpenRouter instead of AI Gateway  |
 | `AI_MODEL`                   | (Optional) Model id, defaults to `anthropic/claude-sonnet-4.6`         |
+| `VERCEL_TOKEN`               | (Optional) Vercel access token, needed for Sandbox outside Vercel      |
+| `VERCEL_TEAM_ID`             | (Optional) Vercel team id (`team_...`), needed outside Vercel          |
+| `VERCEL_PROJECT_ID`          | (Optional) Vercel project id (`prj_...`), needed outside Vercel        |
 | `GITHUB_APP_ID`              | The ID of your GitHub App                                              |
 | `GITHUB_APP_INSTALLATION_ID` | The installation ID for your repository                                |
 | `GITHUB_APP_PRIVATE_KEY`     | The private key generated for your GitHub App (with `\n` for newlines) |
